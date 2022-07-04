@@ -1,0 +1,16 @@
+{
+    "name": "node-cli",
+    "version": "0.0.1",
+    "description": "nodejs cli program",
+    "main": "idnex.js",
+    "author": "Swim",
+    "license": "ISC",
+    "bin": {
+        "cli": "./command.js"
+    },
+    "dependencies": {
+        "chalk": "^5.0.1",
+        "commander": "^5.1.0",
+        "inquirer": "^9.0.0"
+    }
+}
