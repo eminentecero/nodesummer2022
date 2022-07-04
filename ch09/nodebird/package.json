@@ -22,5 +22,8 @@
     "artillery": "^2.0.0-19",
     "jest": "^28.1.1",
     "supertest": "^6.2.3"
+  },
+  "dependencies": {
+    "passport": "^0.5.3"
   }
 }
