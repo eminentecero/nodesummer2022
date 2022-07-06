@@ -39,6 +39,11 @@
             {% if twit.img %}
               <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
             {% endif %}
+            {% if not likedList.includes(twit.id) and user %}
+            <button class="like">좋아요</button>
+              {% elseif user %}
+              <button class="canclelike">좋아요 취소</button>
+            {% endif %}
           </div>
         {% endfor %}
 
@@ -99,6 +104,38 @@
                 });
             }
           }
+        }
+      });
+    });
+    document.querySelectorAll('.like').forEach(function(tag) {
+      tag.addEventListener('click', function() {
+        const myId = document.querySelector('#my-id');
+        if (myId) {
+          const userId = tag.parentNode.querySelector('.twit-user-id').value;
+          const postId = tag.parentNode.querySelector('.twit-id').value;
+          axios.post(`/post/Like/${postId}`)
+                .then(() => {
+                  location.reload();
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+        }
+      });
+    });
+    document.querySelectorAll('.canclelike').forEach(function(tag) {
+      tag.addEventListener('click', function() {
+        const myId = document.querySelector('#my-id');
+        if (myId) {
+          const userId = tag.parentNode.querySelector('.twit-user-id').value;
+          const postId = tag.parentNode.querySelector('.twit-id').value;
+          axios.post(`/post/CancelLike/${postId}`)
+                .then(() => {
+                  location.reload();
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
         }
       });
     });

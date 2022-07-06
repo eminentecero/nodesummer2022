@@ -3,8 +3,10 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const {Post, Hashtag} = require('../models');
+const {Post, Hashtag, User} = require('../models');
 const {isLoggedIn} = require('./middlewares');
+const { findOne } = require('../models/user');
+const db = require('../models');
 
 const router = express.Router();
 
@@ -56,6 +58,40 @@ router.post('/', isLoggedIn, upload2.none(), async(req, res, next) => {
         }
         res.redirect('/');
     }catch(error){
+        console.error(error);
+        next(error);
+    }
+});
+
+router.get('/userid/postid', () => {
+    console.log('들어옴');
+})
+
+router.post('/Like/:postid', isLoggedIn, async (req, res, next) => {
+    try{
+        const userid = req.user.id;
+        const postid = req.params.postid;
+        
+        const user = await User.findOne({where: {id: userid}});
+        await user.addLikedPost(parseInt(postid, 10));
+
+        res.send('ok');
+    }catch (error){
+        console.error(error);
+        next(error);
+    }
+});
+
+router.post('/CancelLike/:postid', isLoggedIn, async (req, res, next) => {
+    try{
+        const userid = req.user.id;
+        const postid = req.params.postid;
+        
+        const user = await User.findOne({where: {id: userid}});
+        await user.removeLikedPost(parseInt(postid, 10));
+
+        res.send('ok');
+    }catch (error){
         console.error(error);
         next(error);
     }

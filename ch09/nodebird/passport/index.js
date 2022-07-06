@@ -2,6 +2,7 @@ const passport = require('passport');
 const local = require('./localStrategy');
 const kakao = require('./kakaoStrategy');
 const User = require('../models/user');
+const Post = require('../models/post');
 
 module.exports = () => {
     // 로그인 시 실행
@@ -23,6 +24,9 @@ module.exports = () => {
                 model: User,
                 attributes: ['id', 'nick'],
                 as: 'Followings',
+            }, {
+                model: Post,
+                as: 'LikedPosts',
             }],
         })
         .then(user => done(null, user))
