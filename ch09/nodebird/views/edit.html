@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="timeline">
+    <form id="edit-form" action="/edit" method="post">
+        <div class="input-group">
+            <label for="edit-nick">닉네임</label>
+            <input id="edit-nick" type="text" name="nick">
+        </div>
+        <button class="btn">수정</button>
+    </form>
+</div>
+{% endblock %}

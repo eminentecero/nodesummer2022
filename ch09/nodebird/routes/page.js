@@ -16,6 +16,22 @@ router.get('/profile', isLoggedIn, (req, res) => {
     res.render('profile', {title: '내 정보 - NodeBird'});
 });
 
+router.get('/edit', isLoggedIn, (req, res) => {
+    res.render('edit', {title: '닉네임 수정 - NodeBird'});
+});
+
+router.post('/edit', isLoggedIn, async(req, res, next) => {
+    try{
+        const newNick = req.body.nick;
+        await User.update({
+            nick: newNick
+        }, {where: {id: req.user.id}});
+        res.send('success');
+    }catch (error){
+        console.error(error);
+    }
+});
+
 router.get('/join', isNotLoggedIn, (req, res) => {
     res.render('join', {title: '회원가입 - NodeBird'});
 });
