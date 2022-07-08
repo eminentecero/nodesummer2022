@@ -44,6 +44,9 @@
               {% elseif user %}
               <button class="canclelike">좋아요 취소</button>
             {% endif %}
+            {% if user.id === twit.User.id %}
+            <button class="delete">삭제</button>
+            {% endif %}
           </div>
         {% endfor %}
 
@@ -137,6 +140,20 @@
                   console.error(err);
                 });
         }
+      });
+    });
+    document.querySelectorAll('.delete').forEach(function(tag) {
+      tag.addEventListener('click', function() {
+        const postId = tag.parentNode.querySelector('.twit-id').value;
+        if (confirm('삭제하시겠습니까?')) {
+              axios.delete(`/post/${postId}`)
+                .then(() => {
+                  location.reload();
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+            }
       });
     });
   </script>

@@ -63,9 +63,6 @@ router.post('/', isLoggedIn, upload2.none(), async(req, res, next) => {
     }
 });
 
-router.get('/userid/postid', () => {
-    console.log('들어옴');
-})
 
 router.post('/Like/:postid', isLoggedIn, async (req, res, next) => {
     try{
@@ -92,6 +89,21 @@ router.post('/CancelLike/:postid', isLoggedIn, async (req, res, next) => {
 
         res.send('ok');
     }catch (error){
+        console.error(error);
+        next(error);
+    }
+});
+
+router.delete('/:postid', isLoggedIn, async(req, res, next) => {
+    try{
+        const post = await Post.destroy({
+            where: {
+                id: req.params.postid,
+            }
+        })
+        res.send('ok');
+
+    }catch(error){
         console.error(error);
         next(error);
     }
