@@ -105,6 +105,52 @@ router.get('/posts/hashtag/:title', verifyToken, apiLimiter, async(req, res) => 
     }
 });
 
+
+router.get('/my/following', verifyToken, apiLimiter, async (req, res)=> {
+    try{
+        const user = await User.findOne({
+            where: {id: req.decoded.id}
+        });
+        if(user){
+            const followings = await user.getFollowings();
+
+            res.json({
+                code:200,
+                payload: followings.map((v) => v.nick),
+            });
+        }
+    }catch (error){
+        console.error(error);
+        return res.status(500).json({
+            code:500,
+            message: '서버 에러',
+        });
+    }
+});
+
+router.get('/my/follower', verifyToken, apiLimiter, async (req, res)=> {
+    try{
+        const user = await User.findOne({
+            where: {id: req.decoded.id}
+        });
+        if(user){
+            const followers = await user.getFollowers();
+
+            res.json({
+                code:200,
+                payload: followers.map((v) => v.nick),
+            });
+        }
+    }catch (error){
+        console.error(error);
+        return res.status(500).json({
+            code:500,
+            message: '서버 에러',
+        });
+    }
+});
+
+
 router.use(cors({
     credential: true,
 }));

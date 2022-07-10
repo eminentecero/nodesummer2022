@@ -50,6 +50,33 @@ router.get('/mypost', async (req, res, next) => {
     }
   });
   
+  router.get('/following', async (req, res) => {
+    try {
+      const result = await request(
+        req, `/my/following`,
+      );
+      res.json(result.data);
+    } catch (error) {
+      if (error.code) {
+        console.error(error);
+        next(error);
+      }
+    }
+  })
+
+  router.get('/follower', async (req, res) => {
+    try {
+      const result = await request(
+        req, `/my/follower`,
+      );
+      res.json(result.data);
+    } catch (error) {
+      if (error.code) {
+        console.error(error);
+        next(error);
+      }
+    }
+  })
 
   router.get('/', (req, res) => {
     res.render('main', {key: process.env.CLIENT_SECRET});
