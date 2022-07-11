@@ -10,11 +10,16 @@ module.exports = class Domain extends Sequelize.Model{
             },
             // 도메인 종류
             type: {
-                type: Sequelize.ENUM('free', 'premium'),
+                type: Sequelize.STRING(10),
                 allowNull: false,
             },
             // 클라이언트 비밀 키
             clientSecret: {
+                type: Sequelize.UUID,
+                allowNull: false,
+            },
+            // 서버 비밀 키
+            serverSecret: {
                 type: Sequelize.UUID,
                 allowNull: false,
             },

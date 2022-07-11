@@ -9,7 +9,7 @@ const request = async(req, api) => {
     try{
         if(!req.session.jwt){
             const tokenResult = await axios.post(`${URL}/token`, {
-                clientSecret: process.env.CLIENT_SECRET,
+                clientSecret: process.env.FRONT_SECRET,
             });
             req.session.jwt = tokenResult.data.token;
         }
@@ -79,7 +79,7 @@ router.get('/mypost', async (req, res, next) => {
   })
 
   router.get('/', (req, res) => {
-    res.render('main', {key: process.env.CLIENT_SECRET});
+    res.render('main', {key: process.env.FRONT_SECRET});
   });
   
 module.exports = router;

@@ -28,6 +28,7 @@ router.post('/domain', isLoggedIn, async (req, res, next) => {
       host: req.body.host,
       type: req.body.type,
       clientSecret: uuidv4(),
+      serverSecret: uuidv4(),
     });
     res.redirect('/');
   } catch (err) {
