@@ -14,6 +14,8 @@ const authRouter = require('./routes/auth');
 const indexRouter = require('./routes');
 const {sequelize} = require('./models');
 const passportConfig = require('./passport');
+// index.js
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 passportConfig();
@@ -54,6 +56,8 @@ app.use('/v1', v1);
 app.use('/v2', v2);
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('./SwaggerDocs')));
 
 app.use((req, res, next)=>{
     const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);

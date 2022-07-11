@@ -34,6 +34,27 @@ router.use(async (req, res, next)=>{
     }
 });
 
+/**
+ * @swagger
+ * paths:
+ *  /v2/token:
+ *    post:
+ *      summary: "토큰 발급"
+ *      description: "요청자에 대한 토큰 발급"
+ *      tags: [API]
+*      responses:
+ *        "200":
+ *          description: 토큰 안내 메시지
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: String
+ *                properties:
+ *                    ok:
+ *                      type: boolean
+ *                    message:
+ *                      type: String
+ */
 // 토큰 발급
 router.post('/token', async(req, res) => {
     const {clientSecret} = req.body;
@@ -76,10 +97,30 @@ router.get('/test', verifyToken, (req, res) => {
     res.json(req.decoded);
 });
 
+/**
+ * @swagger
+ * paths:
+ *  /v2/posts/my:
+ *    post:
+ *      summary: "사용자 글 보기"
+ *      description: "사용자가 작성한 글 내용 보여주기"
+ *      tags: [API]
+*      responses:
+ *        "200":
+ *          description: 글 정보
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: Object
+ *                properties:
+ *                    ok:
+ *                      type: boolean
+ *                    payload:
+ *                      type: String
+ */
 router.get('/posts/my', verifyToken,(req, res)=> {
     Post.findAll({where: {userId: req.decoded.id}})
         .then((posts) => {
-            console.log(posts);
             res.json({
                 code: 200,
                 payload: posts,
@@ -94,6 +135,27 @@ router.get('/posts/my', verifyToken,(req, res)=> {
         });
 });
 
+/**
+ * @swagger
+ * paths:
+ *  /v2/posts/hashtag/:title:
+ *    post:
+ *      summary: "해시태그 내용 검색"
+ *      description: "해당 해시태그 내용을 가진 해시태그를 검색"
+ *      tags: [API]
+*      responses:
+ *        "200":
+ *          description: 해시태그 정보
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: Object
+ *                properties:
+ *                    ok:
+ *                      type: boolean
+ *                    payload:
+ *                      type: String
+ */
 router.get('/posts/hashtag/:title', verifyToken, async(req, res) => {
     try{
         const hashtag = await Hashtag.findOne({where: {title: req.params.title}});
@@ -117,7 +179,27 @@ router.get('/posts/hashtag/:title', verifyToken, async(req, res) => {
     }
 });
 
-
+/**
+ * @swagger
+ * paths:
+ *  /v2/my/following:
+ *    post:
+ *      summary: "팔로잉 목록"
+ *      description: "사용자 팔로잉 목록"
+ *      tags: [API]
+*      responses:
+ *        "200":
+ *          description: "성공"
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: Object
+ *                properties:
+ *                    ok:
+ *                      type: boolean
+ *                    payload:
+ *                      type: String
+ */
 router.get('/my/following', verifyToken, async (req, res)=> {
     try{
         const user = await User.findOne({
@@ -140,6 +222,27 @@ router.get('/my/following', verifyToken, async (req, res)=> {
     }
 });
 
+/**
+ * @swagger
+ * paths:
+ *  /v2/my/follower:
+ *    post:
+ *      summary: "팔로워 목록"
+ *      description: "사용자 팔로워 목록"
+ *      tags: [API]
+*      responses:
+ *        "200":
+ *          description: "성공"
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: Object
+ *                properties:
+ *                    ok:
+ *                      type: boolean
+ *                    payload:
+ *                      type: String
+ */
 router.get('/my/follower', verifyToken,async (req, res)=> {
     try{
         const user = await User.findOne({
