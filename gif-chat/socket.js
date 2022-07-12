@@ -23,18 +23,32 @@ module.exports = (server, app, sessionMiddleware) => {
 
   chat.on('connection', (socket) => {
     console.log('chat 네임스페이스에 접속');
-    
+
     const req = socket.request;
     const { headers: { referer } } = req;
     const roomId = referer
       .split('/')[referer.split('/').length - 1]
       .replace(/\?.+/, '');
     socket.join(roomId);
-    //TODO: (현재 인원/최대 인원) 형식으로 띄우기 .${socket.adapter.rooms[roomId].max}
-    socket.to(roomId).emit('join', {
-      user: 'system',
-      chat: `${req.session.color}님이 입장하셨습니다. \n 현재 채팅방 인원: ${socket.adapter.rooms[roomId].length}`
-    });
+    // //TODO: (현재 인원/최대 인원) 형식으로 띄우기 .${socket.adapter.rooms[roomId].max}
+    // socket.to(roomId).emit('join', {
+    //   user: 'system',
+    //   chat: `${req.session.color}님이 입장하셨습니다. \n 현재 채팅방 인원: ${socket.adapter.rooms[roomId].length}`
+    // });
+
+    axios.post(`http://localhost:8005/room/${roomId}/sys`, {
+      type: 'join',
+    }, {
+      headers: {
+        Cookie: `connect.sid=s%3A${cookie.sign(req.signedCookies['connect.sid'], process.env.COOKIE_SECRET)}`
+      }
+    })
+      .then(() => {
+        console.log('방 입장 요청 성공');
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
     socket.on('disconnect', () => {
       console.log('chat 네임스페이스 접속 해제');
@@ -47,7 +61,7 @@ module.exports = (server, app, sessionMiddleware) => {
         axios.delete(`http://localhost:8005/room/${roomId}`, {
           headers: {
             Cookie: `connect.sid=s%3A${connectSID}`
-          } 
+          }
         })
           .then(() => {
             console.log('방 제거 요청 성공');
@@ -56,10 +70,24 @@ module.exports = (server, app, sessionMiddleware) => {
             console.error(error);
           });
       } else {
-        socket.to(roomId).emit('exit', {
-          user: 'system',
-          chat: `${req.session.color}님이 퇴장하셨습니다. \n 현재 채팅방 인원: ${socket.adapter.rooms[roomId].length}`
-        });
+        // socket.to(roomId).emit('exit', {
+        //   user: 'system',
+        //   chat: `${req.session.color}님이 퇴장하셨습니다. \n 현재 채팅방 인원: ${socket.adapter.rooms[roomId].length}`
+        // });
+
+        axios.post(`http://localhost:8005/room/${roomId}/sys`, {
+          type: 'exit',
+        }, {
+          headers: {
+            Cookie: `connect.sid=s%3A${cookie.sign(req.signedCookies['connect.sid'], process.env.COOKIE_SECRET)}`
+          }
+        })
+          .then(() => {
+            console.log('방 입장 요청 성공');
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
     });
   });

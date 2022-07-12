@@ -83,18 +83,40 @@ router.delete('/room/:id', async(req, res, next) => {
 });
 
 router.post('/room/:id/chat', async (req, res, next) => {
-    try{
-        const chat = await Chat.create({
-            room: req.params.id,
-            user: req.session.color,
-            chat: req.body.chat,
-        });
-        req.app.get('io').of('/chat').to(req.params.id).emit('chat', chat);
-        res.send('ok');
-    }catch(error){
-        console.error(error);
-        next(error);
-    }
+  try{
+      const chat = await Chat.create({
+          room: req.params.id,
+          user: req.session.color,
+          chat: req.body.chat,
+      });
+      req.app.get('io').of('/chat').to(req.params.id).emit('chat', chat);
+      res.send('ok');
+  }catch(error){
+      console.error(error);
+      next(error);
+  }
+});
+
+//number: app.get('io').of('/chat').adapter.rooms[req.params.id].length,
+router.post('/room/:id/sys', async (req, res, next) => {
+  const number = req.app.get('io').of('/chat').adapter.rooms[req.params.id].length;
+  const msg = req.body.type === 'join' ? `${req.session.color}님이 입장하셨습니다. \n 현재 인원: ${number}`:`${req.session.color}님이 퇴장하셨습니다. \n 현재 인원: ${number}`;
+  try{
+      const chat = await Chat.create({
+          room: req.params.id,
+          user: 'system',
+          chat: msg,
+      });
+      chat.save();
+      req.app.get('io').of('/chat').to(req.params.id).emit(req.body.type, {
+        user: 'system',
+        chat: msg,
+      });
+      res.send('ok');
+  }catch(error){
+      console.error(error);
+      next(error);
+  }
 });
 
 try {
