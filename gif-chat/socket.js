@@ -23,15 +23,17 @@ module.exports = (server, app, sessionMiddleware) => {
 
   chat.on('connection', (socket) => {
     console.log('chat 네임스페이스에 접속');
+    
     const req = socket.request;
     const { headers: { referer } } = req;
     const roomId = referer
       .split('/')[referer.split('/').length - 1]
       .replace(/\?.+/, '');
     socket.join(roomId);
+    //TODO: (현재 인원/최대 인원) 형식으로 띄우기 .${socket.adapter.rooms[roomId].max}
     socket.to(roomId).emit('join', {
       user: 'system',
-      chat: `${req.session.color}님이 입장하셨습니다.`,
+      chat: `${req.session.color}님이 입장하셨습니다. \n 현재 채팅방 인원: ${socket.adapter.rooms[roomId].length}`
     });
 
     socket.on('disconnect', () => {
@@ -56,7 +58,7 @@ module.exports = (server, app, sessionMiddleware) => {
       } else {
         socket.to(roomId).emit('exit', {
           user: 'system',
-          chat: `${req.session.color}님이 퇴장하셨습니다.`,
+          chat: `${req.session.color}님이 퇴장하셨습니다. \n 현재 채팅방 인원: ${socket.adapter.rooms[roomId].length}`
         });
       }
     });

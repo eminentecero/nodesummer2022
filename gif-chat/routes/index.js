@@ -58,6 +58,7 @@ router.get('/room/:id', async(req, res, next) => {
         return res.render('chat', {
             room,
             title: room.title,
+            max: room.max,
             chats,
             user: req.session.color,
         });
