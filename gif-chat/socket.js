@@ -90,5 +90,10 @@ module.exports = (server, app, sessionMiddleware) => {
           });
       }
     });
+
+    // 귓속말 할 때 실행되어짐. - 지정된 상대방에게만 data 보냄.
+    socket.on('dm', (data) => {
+      socket.to(data.target).emit('dm', data);
+    })
   });
 };

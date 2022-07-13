@@ -89,7 +89,14 @@ router.post('/room/:id/chat', async (req, res, next) => {
           user: req.session.color,
           chat: req.body.chat,
       });
-      req.app.get('io').of('/chat').to(req.params.id).emit('chat', chat);
+      //req.app.get('io').of('/chat').to(req.params.id).emit('chat', chat);
+      req.app.get('io').of('/chat').to(req.params.id).emit('chat',{
+        socket: req.body.sid,
+        room: req.params.id,
+        user: req.session.color,
+        chat: req.body.chat,
+      });
+      console.log('chat id: '+ req.body.sid);
       res.send('ok');
   }catch(error){
       console.error(error);
@@ -144,7 +151,13 @@ try {
         user: req.session.color,
         gif: req.file.filename,
       });
-      req.app.get('io').of('/chat').to(req.params.id).emit('chat', chat);
+      //req.app.get('io').of('/chat').to(req.params.id).emit('chat', chat);
+      req.app.get('io').of('/chat').to(req.params.id).emit('chat', {
+        socket: req.body.sid,
+        room: req.params.id,
+        user: req.session.color,
+        gif: req.file.filename,
+      });
       res.send('ok');
     } catch (error) {
       console.error(error);

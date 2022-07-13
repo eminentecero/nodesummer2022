@@ -61,6 +61,10 @@
       div.appendChild(chat);
       document.querySelector('#chat-list').appendChild(div);
     });
+   // socket.js에서 보내진 소켓 내용을 프론엔드에서도 뿌려줌.
+    socket.on('dm', function (data) {
+      alert(data.from+'님에게서 귓속말이 도착했습니다. : ' + data.msg);
+    });
     socket.on('chat', function (data) {
       const div = document.createElement('div');
       if (data.user === '{{user}}') {
@@ -71,6 +75,17 @@
       const name = document.createElement('div');
       name.textContent = data.user;
       div.appendChild(name);
+
+      if(data.user != '{{user}}'){
+        const dm = document.createElement('button');
+        dm.textContent = '귓속말';
+        dm.className = 'dm';
+        dm.dataset.socket=data.socket;
+        dm.addEventListener('click', sendDM);
+        name.appendChild(dm);
+      }
+
+
       if (data.chat) {
         const chat = document.createElement('div');
         chat.textContent = data.chat;
@@ -88,6 +103,7 @@
       if (e.target.chat.value) {
         axios.post('/room/{{room._id}}/chat', {
           chat: this.chat.value,
+          sid: socket.id,
         })
           .then(() => {
             e.target.chat.value = '';
@@ -108,6 +124,16 @@
         .catch((err) => {
           console.error(err);
         });
+    });
+    const sendDM = function (e) {
+      const id = e.target.dataset.socket; // socket id를 받아옴
+      const prompt = window.prompt('귓속말을 입력하세요.');
+      socket.emit('dm', {target: id, msg: prompt, from: '{{user}}'});
+    };
+
+    // dm 버튼을 눌렀을 때 모두 sendDM이 가능하도록 함.
+    Array.prototype.forEach.call(document.querySelectorAll('.dm'), function (el){
+      el.addEventListener('click', sendDM);
     });
   </script>
 {% endblock %}
