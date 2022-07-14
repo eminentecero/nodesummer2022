@@ -70,11 +70,6 @@ module.exports = (server, app, sessionMiddleware) => {
             console.error(error);
           });
       } else {
-        // socket.to(roomId).emit('exit', {
-        //   user: 'system',
-        //   chat: `${req.session.color}님이 퇴장하셨습니다. \n 현재 채팅방 인원: ${socket.adapter.rooms[roomId].length}`
-        // });
-
         axios.post(`http://localhost:8005/room/${roomId}/sys`, {
           type: 'exit',
         }, {
@@ -83,7 +78,7 @@ module.exports = (server, app, sessionMiddleware) => {
           }
         })
           .then(() => {
-            console.log('방 입장 요청 성공');
+            console.log('방 퇴장 요청 성공');
           })
           .catch((error) => {
             console.error(error);
@@ -94,6 +89,10 @@ module.exports = (server, app, sessionMiddleware) => {
     // 귓속말 할 때 실행되어짐. - 지정된 상대방에게만 data 보냄.
     socket.on('dm', (data) => {
       socket.to(data.target).emit('dm', data);
+    })
+    socket.on('ban', (data) => {
+      console.log(data);
+      socket.to(data).emit('ban');
     })
   });
 };

@@ -108,6 +108,7 @@ router.post('/room/:id/chat', async (req, res, next) => {
 router.post('/room/:id/sys', async (req, res, next) => {
   const number = req.app.get('io').of('/chat').adapter.rooms[req.params.id].length;
   const msg = req.body.type === 'join' ? `${req.session.color}님이 입장하셨습니다. \n 현재 인원: ${number}`:`${req.session.color}님이 퇴장하셨습니다. \n 현재 인원: ${number}`;
+
   try{
       const chat = await Chat.create({
           room: req.params.id,

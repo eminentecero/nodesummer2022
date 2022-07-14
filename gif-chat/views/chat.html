@@ -3,6 +3,7 @@
 {% block content %}
   <h1>{{title}}</h1>
   <a href="/" id="exit-btn">방 나가기</a>
+  <h3 id="room-owner">{{room.owner}}</h3>
   <fieldset>
     <legend>채팅 내용</legend>
     <div id="chat-list">
@@ -61,10 +62,6 @@
       div.appendChild(chat);
       document.querySelector('#chat-list').appendChild(div);
     });
-   // socket.js에서 보내진 소켓 내용을 프론엔드에서도 뿌려줌.
-    socket.on('dm', function (data) {
-      alert(data.from+'님에게서 귓속말이 도착했습니다. : ' + data.msg);
-    });
     socket.on('chat', function (data) {
       const div = document.createElement('div');
       if (data.user === '{{user}}') {
@@ -83,8 +80,16 @@
         dm.dataset.socket=data.socket;
         dm.addEventListener('click', sendDM);
         name.appendChild(dm);
-      }
 
+        if('{{user}}' == '{{room.owner}}'){
+          const ban = document.createElement('button');
+          ban.textContent = '강퇴';
+          ban.className = 'ban';
+          ban.dataset.socket=data.socket;
+          ban.addEventListener('click', funcban);
+          name.appendChild(ban);
+        }
+      }
 
       if (data.chat) {
         const chat = document.createElement('div');
@@ -131,9 +136,32 @@
       socket.emit('dm', {target: id, msg: prompt, from: '{{user}}'});
     };
 
+    const funcban = function(e){
+      const id = e.target.dataset.socket;
+      const name = e.target.textContent;
+      const owner = document.getElementById('room-owner').textContent;
+      if('{{user}}' === owner && name !== owner){
+        if(confirm(`${name}을 강퇴시킬겁니까?`)){
+          socket.emit('ban', id);
+        }
+      }
+    };
+   // socket.js에서 보내진 소켓 내용을 프론엔드에서도 뿌려줌.
+    socket.on('dm', function (data) {
+      alert(data.from+'님에게서 귓속말이 도착했습니다. : ' + data.msg);
+    });
+   // 강퇴
+    socket.on('ban', function () {
+      alert('강퇴되었습니다.');
+      location.href = '/';
+    });
     // dm 버튼을 눌렀을 때 모두 sendDM이 가능하도록 함.
     Array.prototype.forEach.call(document.querySelectorAll('.dm'), function (el){
       el.addEventListener('click', sendDM);
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('.ban'), function (el){
+      el.addEventListener('click', ban);
     });
   </script>
 {% endblock %}
