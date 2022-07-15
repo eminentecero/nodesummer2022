@@ -4,7 +4,7 @@
     "description": "노드 경매 시스템",
     "main": "app.js",
     "scripts": {
-        "start": "nodemon app"
+        "start": "nodemon app.js"
     },
     "author": "Zero Cho",
     "license": "ISC",

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const User = require('./user');
-const Good = require('./good');
+const Good = require('./goods');
 const Auction = require('./auction');
 
 const env = process.env.NODE_ENV || 'development';
