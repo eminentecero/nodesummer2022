@@ -16,6 +16,11 @@ module.exports = class Good extends Sequelize.Model {
         allowNull: false,
         defaultValue: 0,
       },
+      time: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 24,
+      }
     }, {
       sequelize,
       timestamps: true,
