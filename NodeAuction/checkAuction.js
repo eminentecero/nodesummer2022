@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 
 const { Good, Auction, User, sequelize } = require('./models');
+const schedule = require('node-schedule');
 
 module.exports = async () => {
     try {
@@ -23,8 +24,23 @@ module.exports = async () => {
                 }, {
                     where: { id: success.UserId },
                 });
+            }else{
+                schedule.scheduleJob(end, async () => {
+                    const success = await Auction.findOne({
+                        where: { GoodId: good.id },
+                        order: [['bid', 'DESC']],
+                    });
+                    await Good.update({ SoldId: success.UserId }, { where: { id: good.id } });
+                    await User.update({
+                        money: sequelize.literal(`money - ${success.bid}`),
+                    }, {
+                        where: { id: success.UserId },
+                    });
+                });
             }
         });
+
+
     } catch (error) {
         console.error(error);
     }
