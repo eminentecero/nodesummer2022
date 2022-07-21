@@ -8,7 +8,7 @@ module.exports = async () => {
         const targets = await Good.findAll({
             where: {
                 SoldId: null,
-            },
+            }
         });
         
         targets.forEach(async (target) => {
@@ -28,7 +28,10 @@ module.exports = async () => {
                         where: { id: success.UserId },
                     });
                 }else{
-                    end.setDate(end.getDate()  + 10);
+                    // 1. 낙찰 시간을 연장
+                    // end.setDate(end.getDate()  + 10);
+                    // 2. 낙찰자를 해당 물품 등록자로
+                    await Good.update({Soldid: target.ownerId}, {where: {id: target.id}});
                 }
 
             }else{
@@ -37,12 +40,19 @@ module.exports = async () => {
                         where: { GoodId: good.id },
                         order: [['bid', 'DESC']],
                     });
-                    await Good.update({ SoldId: success.UserId }, { where: { id: good.id } });
-                    await User.update({
-                        money: sequelize.literal(`money - ${success.bid}`),
-                    }, {
-                        where: { id: success.UserId },
-                    });
+                    if(success){
+                        await Good.update({ Soldid: success.UserId }, { where: { id: target.id } });
+                        await User.update({
+                            money: sequelize.literal(`money - ${success.bid}`),
+                        }, {
+                            where: { id: success.UserId },
+                        });
+                    }else{
+                        // 1. 낙찰 시간을 연장
+                        // end.setDate(end.getDate()  + 10);
+                        // 2. 낙찰자를 해당 물품 등록자로
+                        await Good.update({Soldid: good.ownerId}, {where: {id: target.id}});
+                    }
                 });
             }
         });
