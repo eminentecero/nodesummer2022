@@ -88,6 +88,14 @@
           ban.dataset.socket=data.socket;
           ban.addEventListener('click', funcban);
           name.appendChild(ban);
+
+          const yours = document.createElement('button');
+          yours.textContent = '방장 위임';
+          yours.className = 'yours';
+          yours.dataset.color = data.user;
+          yours.dataset.socket=data.socket;
+          yours.addEventListener('click', funcyours);
+          name.appendChild(yours);
         }
       }
 
@@ -146,6 +154,29 @@
         }
       }
     };
+
+    const funcyours = function(e){
+      const id = e.target.dataset.color;
+      const name = e.target.textContent;
+      const owner = document.getElementById('room-owner').textContent;
+
+      console.log(id);
+      
+      if('{{user}}' === owner && name !== owner){
+        if(confirm(`${name}에게 방장 기능을 위임하십니까?`)){
+          axios.post('/room/{{room._id}}', {
+          newowner: id,
+          owner: owner,
+        })
+          .then(() => {
+            e.target.chat.value = '';
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+        }
+      }
+    }
    // socket.js에서 보내진 소켓 내용을 프론엔드에서도 뿌려줌.
     socket.on('dm', function (data) {
       alert(data.from+'님에게서 귓속말이 도착했습니다. : ' + data.msg);
@@ -155,6 +186,7 @@
       alert('강퇴되었습니다.');
       location.href = '/';
     });
+
     // dm 버튼을 눌렀을 때 모두 sendDM이 가능하도록 함.
     Array.prototype.forEach.call(document.querySelectorAll('.dm'), function (el){
       el.addEventListener('click', sendDM);

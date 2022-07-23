@@ -127,6 +127,20 @@ router.post('/room/:id/sys', async (req, res, next) => {
   }
 });
 
+router.post('/room/:id', async (req, res, next) => {
+  try{
+    const room = await Room.update({
+      _id: req.params.id
+    },{
+      owner: req.body.newowner,
+    })
+    res.send('ok');
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+})
+
 try {
     fs.readdirSync('uploads');
   } catch (err) {
