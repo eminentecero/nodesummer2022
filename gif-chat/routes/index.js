@@ -127,6 +127,7 @@ router.post('/room/:id/sys', async (req, res, next) => {
   }
 });
 
+// 방장 위임 기능 수정
 router.post('/room/:id', async (req, res, next) => {
   try{
     const room = await Room.update({
@@ -134,6 +135,7 @@ router.post('/room/:id', async (req, res, next) => {
     },{
       owner: req.body.newowner,
     })
+    req.app.get('io').of('/chat').to(req.body.sid).emit('yours');
     res.send('ok');
   } catch (e) {
     console.error(e);
